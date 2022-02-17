@@ -66,9 +66,7 @@ def take_the_most_order_requested_by_name(file, name):
 def take_the_less_order(file, name):
     orders = get_orders(file, name)
     minimum = min(orders.values())
-    for key, value in orders.items():
-        if value == minimum:
-            return value
+    return minimum
 
 
 def take_options_less_requested(file, name):
