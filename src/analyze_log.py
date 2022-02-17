@@ -57,6 +57,7 @@ def get_days_off(file, name):
 
     return days_off
 
+
 def take_the_most_order_requested_by_name(file, name):
     orders = get_orders(file, name)
     return get_bigger(orders)
@@ -83,6 +84,32 @@ def take_options_less_requested(file, name):
     return get_dont_pick(options)
 
 
+def get_most_crowded_day(file):
+    big_day = {}
+    for item in file:
+        if item[2] not in big_day:
+            big_day[item[2]] = 1
+        else:
+            big_day[item[2]] += 1
+    maximum = max(big_day.values())
+    for key, value in big_day.items():
+        if value == maximum:
+            return key
+
+
+def get_less_crowded_day(file):
+    less_day = {}
+    for item in file:
+        if item[2] not in less_day:
+            less_day[item[2]] = 1
+        else:
+            less_day[item[2]] += 1
+    minimum = min(less_day.values())
+    for key, value in less_day.items():
+        if value == minimum:
+            return key
+
+
 def analyze_log(path_to_file):
     file = read_file(path_to_file)
     days_off_joao = get_days_off(file, "joao")
@@ -97,6 +124,3 @@ def analyze_log(path_to_file):
     ]
     with open("data/mkt_campaign.txt", "w") as file:
         file.writelines(lista)
-
-
-analyze_log("data/orders_1.csv")
