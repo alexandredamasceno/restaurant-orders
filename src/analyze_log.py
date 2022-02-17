@@ -1,14 +1,25 @@
 import csv
 
 
+def read_file(path):
+    try:
+        with open(path, "r") as file:
+            result = csv.reader(file, delimiter=",")
+            data = [item for item in result]
+            return data
+    except FileNotFoundError:
+        expect_text = f"No such file or directory: '{path}'"
+        raise FileNotFoundError(expect_text)
+
+
 def get_orders(list, name):
     orders = {}
     for item in list:
-        if item["maria"] == name:
-            if item["hamburguer"] not in orders:
-                orders[item["hamburguer"]] = 1
+        if item[0] == name:
+            if item[1] not in orders:
+                orders[item[1]] = 1
             else:
-                orders[item["hamburguer"]] += 1
+                orders[item[1]] += 1
     return orders
 
 
@@ -28,76 +39,56 @@ def get_dont_pick(dict):
     return keys
 
 
-def get_days_off_joao(path_to_file):
-    try:
-        with open(path_to_file, "r") as file:
-            result = csv.DictReader(file)
-            days_week = [
-                "segunda-feira",
-                "terça-feira",
-                "sabado",
-            ]
-            days_joao = [
-                item["terça-feira"]
-                for item in result
-                if item["maria"] == "joao"
-            ]
-            days_off = set()
-            for item in days_week:
-                if not days_joao.count(item):
-                    days_off.add(item)
+def get_days_off(file, name):
+    days_week = [
+        "segunda-feira",
+        "terça-feira",
+        "sabado",
+    ]
+    days_on = [
+        item[2]
+        for item in file
+        if item[0] == name
+    ]
+    days_off = set()
+    for item in days_week:
+        if not days_on.count(item):
+            days_off.add(item)
 
-            return days_off
-    except FileNotFoundError:
-        expect_text = f"No such file or directory: '{path_to_file}'"
-        raise FileNotFoundError(expect_text)
+    return days_off
+
+def take_the_most_order_requested_by_name(file, name):
+    orders = get_orders(file, name)
+    return get_bigger(orders)
 
 
-def take_maria(path_to_file):
-    try:
-        with open(path_to_file, "r") as file:
-            result = csv.DictReader(file)
-            orders = get_orders(result, "maria")
-            return get_bigger(orders)
-    except FileNotFoundError:
-        expect_text = f"No such file or directory: '{path_to_file}'"
-        raise FileNotFoundError(expect_text)
+def take_the_less_order(file, name):
+    orders = get_orders(file, name)
+    minimum = min(orders.values())
+    for key, value in orders.items():
+        if value == minimum:
+            return value
 
 
-def take_arnaldo(path_to_file):
-    try:
-        with open(path_to_file, "r") as file:
-            result = csv.DictReader(file)
-            orders = get_orders(result, "arnaldo")
-            return orders["hamburguer"]
-    except FileNotFoundError:
-        expect_text = f"No such file or directory: '{path_to_file}'"
-        raise FileNotFoundError(expect_text)
-
-
-def take_joao(path_to_file):
-    try:
-        with open(path_to_file, "r") as file:
-            options = {
-                "hamburguer": 0,
-                "pizza": 0,
-                "coxinha": 0,
-                "misto-quente": 0,
-            }
-            for item in csv.DictReader(file):
-                if item["maria"] == "joao" and item["hamburguer"] in options:
-                    options[item["hamburguer"]] += 1
-            return get_dont_pick(options)
-    except FileNotFoundError:
-        expect_text = f"No such file or directory: '{path_to_file}'"
-        raise FileNotFoundError(expect_text)
+def take_options_less_requested(file, name):
+    options = {
+        "hamburguer": 0,
+        "pizza": 0,
+        "coxinha": 0,
+        "misto-quente": 0,
+    }
+    for item in file:
+        if item[0] == name and item[1] in options:
+            options[item[1]] += 1
+    return get_dont_pick(options)
 
 
 def analyze_log(path_to_file):
-    days_off_joao = get_days_off_joao(path_to_file)
-    maria = take_maria(path_to_file)
-    arnaldo = take_arnaldo(path_to_file)
-    joao = take_joao(path_to_file)
+    file = read_file(path_to_file)
+    days_off_joao = get_days_off(file, "joao")
+    maria = take_the_most_order_requested_by_name(file, "maria")
+    arnaldo = take_the_less_order(file, "arnaldo")
+    joao = take_options_less_requested(file, "joao")
     lista = [
         f"{str(maria)}\n",
         f"{str(arnaldo)}\n",
@@ -106,3 +97,6 @@ def analyze_log(path_to_file):
     ]
     with open("data/mkt_campaign.txt", "w") as file:
         file.writelines(lista)
+
+
+analyze_log("data/orders_1.csv")
