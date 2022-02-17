@@ -1,2 +1,0 @@
-
-        return len(self.orders)
