@@ -32,8 +32,28 @@ class InventoryControl:
             "frango": 0,
         }
 
+    def get_available_dishes(self):
+        orders_available = set()
+        for order, ingredients in self.INGREDIENTS.items():
+            orders_available.add(order)
+            for item in ingredients:
+                if self.MINIMUM_INVENTORY[item] < 1:
+                    orders_available.remove(order)
+                    break
+
+        return orders_available
+
+    def verify_inventory(self, order):
+        current_ingredients = self.INGREDIENTS[order]
+        print(current_ingredients)
+        for item in current_ingredients:
+            if self.MINIMUM_INVENTORY[item] < 1:
+                return False
+
     def add_new_order(self, costumer, order, day):
         data = [costumer, order, day]
+        if self.verify_inventory(order) is False:
+            return False
         self.orders.append(data)
         update_inventory(
             data, self.MINIMUM_INVENTORY, self.INGREDIENTS, self.total_to_buy
@@ -43,6 +63,8 @@ class InventoryControl:
         return self.total_to_buy
 
 
-# order = InventoryControl()
-# order.add_new_order("Alexandre", "hamburguer", "segunda-feira")
-# print(order.get_quantities_to_buy())
+order = InventoryControl()
+print(order.add_new_order("Alexandre", "hamburguer", "segunda-feira"))
+print(order.add_new_order("Alexandre", "pizza", "segunda-feira"))
+print(order.get_quantities_to_buy())
+print(order.get_available_dishes())
