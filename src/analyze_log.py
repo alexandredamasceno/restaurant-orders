@@ -45,11 +45,7 @@ def get_days_off(file, name):
         "terça-feira",
         "sabado",
     ]
-    days_on = [
-        item[2]
-        for item in file
-        if item[0] == name
-    ]
+    days_on = [item[2] for item in file if item[0] == name]
     days_off = set()
     for item in days_week:
         if not days_on.count(item):
@@ -106,6 +102,15 @@ def get_less_crowded_day(file):
     for key, value in less_day.items():
         if value == minimum:
             return key
+
+
+# Functions to inventory
+def update_inventory(order, inventory, ingredients, total_buy):
+    current_ingredients = ingredients[order[1]]
+    for item in current_ingredients:
+        if item in inventory:
+            inventory[item] -= 1
+            total_buy[item] += 1
 
 
 def analyze_log(path_to_file):
