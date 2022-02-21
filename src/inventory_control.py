@@ -46,7 +46,8 @@ class InventoryControl:
     def verify_inventory(self, order):
         current_ingredients = self.INGREDIENTS[order]
         for item in current_ingredients:
-            if self.MINIMUM_INVENTORY[item] < 1:
+            print(self.total_to_buy[item], self.MINIMUM_INVENTORY[item])
+            if self.total_to_buy[item] >= self.MINIMUM_INVENTORY[item]:
                 return False
 
     def add_new_order(self, costumer, order, day):
