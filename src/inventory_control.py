@@ -45,7 +45,6 @@ class InventoryControl:
 
     def verify_inventory(self, order):
         current_ingredients = self.INGREDIENTS[order]
-        print(current_ingredients)
         for item in current_ingredients:
             if self.MINIMUM_INVENTORY[item] < 1:
                 return False
@@ -56,7 +55,7 @@ class InventoryControl:
             return False
         self.orders.append(data)
         update_inventory(
-            data, self.MINIMUM_INVENTORY, self.INGREDIENTS, self.total_to_buy
+            data, self.INGREDIENTS, self.total_to_buy
         )
 
     def get_quantities_to_buy(self):
@@ -64,7 +63,16 @@ class InventoryControl:
 
 
 order = InventoryControl()
-print(order.add_new_order("Alexandre", "hamburguer", "segunda-feira"))
-print(order.add_new_order("Alexandre", "pizza", "segunda-feira"))
+print(order.add_new_order("Alexandre", "coxinha", "terça-feira"))
+# print(order.add_new_order("Alexandre", "pizza", "segunda-feira"))
+# count = 1
+# while count <= 50:
+#     order.add_new_order("jorge", "hamburguer", "terça-feira")
+#     order.add_new_order("maria", "pizza", "terça-feira")
+#     count += 1
+# hamburguer_pizza = order.add_new_order(
+#     "jorge", "hamburguer", "terça-feira"
+# )
 print(order.get_quantities_to_buy())
 print(order.get_available_dishes())
+print(order.MINIMUM_INVENTORY)

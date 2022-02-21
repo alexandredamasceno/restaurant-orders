@@ -105,11 +105,11 @@ def get_less_crowded_day(file):
 
 
 # Functions to inventory
-def update_inventory(order, inventory, ingredients, total_buy):
+def update_inventory(order, ingredients, total_buy):
     current_ingredients = ingredients[order[1]]
     for item in current_ingredients:
-        if item in inventory:
-            inventory[item] -= 1
+        if item in total_buy:
+            # inventory[item] -= 1
             total_buy[item] += 1
 
 
